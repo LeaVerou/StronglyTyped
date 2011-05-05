@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>StronglyTyped: Unit tests (sort of...)</title>
+</head>
+<body>
+<h1>StronglyTyped: Unit tests (sort of...)</h1>
+<p>There's nothing to see here. Open the console, refresh and look there.</p>
+<p>
+	<strong>StronglyTyped</strong> is a library written by <a href="http://leaverou.me">Lea Verou</a> 
+	to allow strongly typed JavaScript properties and globals in ES5 supporting browsers.
+	<a href="http://leaverou.me/2011/05/strongly-typed-javascript/">Read More</a>
+<script src="strongly-typed.js"></script>
+<script>
+	var o = {};
+	
+	var tests = {
+		'Array': [[], [1, 2, 3], new Array(5), null, 'foo', 5],
+		'Boolean': [false, new Boolean(true), null, 'foo'],
+		'Date': [new Date(), 5],
+		'Function': [function(){}, new Function("5+2"), null, 28],
+		'Integer': [0, -1, 1, 1.5, Infinity, NaN, 'foo'],
+		'Number': [0, -1, 1, Infinity, 1.5, NaN, 'foo'],
+		'String': ['bar', new String('Object string'), null, true]
+	}
+	
+	for(var type in tests) {
+		console.group(type);
+		
+		var typeTests = tests[type],
+		    testProperty = 'test' + type;
+		
+		StronglyTyped[type.toLowerCase()](o, testProperty, typeTests[0]);
+		
+		typeTests.forEach(function(val, i) {
+			console.log('Attempting: o.' + testProperty + ' = ', val, '...');
+			
+			try {
+				o[testProperty] = val;
+				console.log('o.' + testProperty + ' is now equal to', o[testProperty]);
+			}
+			catch(e) {
+				console.error(e);
+			}
+		});
+		
+		console.groupEnd();
+	}
+</script>
+
+</body>
+</html>
