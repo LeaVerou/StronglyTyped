@@ -25,7 +25,7 @@
 	}
 	
 	for(var type in tests) {
-		console.group(type);
+		console.group && console.group(type);
 		
 		var typeTests = tests[type],
 		    testProperty = 'test' + type;
@@ -44,7 +44,7 @@
 			}
 		});
 		
-		console.groupEnd();
+		console.groupEnd && console.groupEnd();
 	}
 </script>
 
