@@ -87,7 +87,7 @@ if(!('defineProperty' in Object)) {
 	}
 	
 	self.property = function(type, o, property, value) {
-		o[property] = arguments.length > 3? value : undefined;
+		o[property] = value;
 	}
 }
 
