@@ -52,6 +52,43 @@ if (!Function.prototype.bind) {
 (function() {
 var objects = [];
 
+
+var supportsDefineProperty = 'defineProperty' in Object &&
+	(function(){
+		var testDOM = document.createElement('div'),
+		    testO = {};
+		
+		try {
+			Object.defineProperty(testDOM, 'test', {
+				get: function(){},
+				set:function(){}
+			});
+			
+			Object.defineProperty(testO, 'test', {
+				get: function(){},
+				set:function(){}
+			});
+		}
+		catch(e){
+			return false;
+		}
+		
+		return true;
+	})();
+
+// Smoothen out differences between Object.defineProperty
+// and __defineGetter__/__defineSetter__
+if (supportsDefineProperty) {
+	var defineProperty = Object.defineProperty;
+}
+else if ('__defineSetter__' in Object) {
+	var defineProperty = function(o, property, etters) {
+		o.__defineGetter__(property, etters.get);
+		
+		o.__defineSetter__(property, etters.set);
+	}
+}
+
 var self = window.StronglyTyped = {
 	/**
 	 * Generic function for defining strongly typed properties.
@@ -89,42 +126,6 @@ var self = window.StronglyTyped = {
 		o[name] = value;
 	}
 };
-
-var supportsDefineProperty = 'defineProperty' in Object &&
-	(function(){
-		var testDOM = document.createElement('div'),
-		    testO = {};
-		
-		try {
-			Object.defineProperty(testDOM, 'test', {
-				get: function(){},
-				set:function(){}
-			});
-			
-			Object.defineProperty(testO, 'test', {
-				get: function(){},
-				set:function(){}
-			});
-		}
-		catch(e){
-			return false;
-		}
-		
-		return true;
-	})();
-
-// Smoothen out differences between Object.defineProperty
-// and __defineGetter__/__defineSetter__
-if (supportsDefineProperty) {
-	var defineProperty = Object.defineProperty;
-}
-else if ('__defineSetter__' in Object) {
-	var defineProperty = function(o, property, etters) {
-		o.__defineGetter__(property, etters.get);
-		
-		o.__defineSetter__(property, etters.set);
-	}
-}
 
 // Fallback to regular properties if getters/setters are not supported
 if (typeof defineProperty === 'undefined') {
