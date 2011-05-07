@@ -68,12 +68,6 @@ var self = window.StronglyTyped = {
 		} 
 		catch(e) { 
 			// IE8 and Saf4
-<<<<<<< HEAD
-			// FIXME This fails silently atm. Should it log something in the console? 
-		}
-		
-		o[property] = value;
-=======
 			// ISSUE This fails silently atm. Should it log something in the console? 
 		}
 		
@@ -99,7 +93,6 @@ var self = window.StronglyTyped = {
 		});
 		
 		o[name] = value;
->>>>>>> master
 	}
 };
 

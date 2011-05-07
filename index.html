@@ -30,7 +30,7 @@
 	}
 	
 	for(var type in tests) {
-		console.group && console.group(type);
+		console.group(type);
 		
 		var typeTests = tests[type],
 		    testProperty = 'test' + type;
@@ -49,7 +49,7 @@
 			}
 		});
 		
-		console.groupEnd && console.groupEnd();
+		console.groupEnd();
 	}
 	
 	console.group('const');
@@ -59,6 +59,8 @@
 	
 	console.log('Attempting: o.testConst = ', 5, '...');
 	console.log('o.testConst is', o.testConst);
+	
+	console.groupEnd();
 </script>
 
 </body>
