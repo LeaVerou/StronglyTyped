@@ -134,6 +134,19 @@ var self = window.StronglyTyped = {
 		});
 		
 		o[name] = value;
+	},
+	
+	/**
+	 * Tests whether a value is of a given type
+	 */
+	is: function(type, value) {
+		switch(type) {
+			case 'Integer':
+				return self.is('Number', value) && (isNaN(value) || !isFinite(value) || value % 1 === 0);
+			default:
+				return value instanceof window[type] ||
+					Object.prototype.toString.call(value) === '[object ' + type + ']';
+		}
 	}
 };
 
@@ -166,7 +179,7 @@ function getter(property) {
  * Generic setter
  */
 function setter(type, property, value) { 
-	if (isType(type, value) || value === null || value === undefined) {
+	if (self.is(type, value) || value === null || value === undefined) {
 		getProperties(this)[property] = value;
 	}
 	else {
@@ -191,19 +204,6 @@ function getProperties(o) {
 	}) - 1;
 	
 	return objects[i].properties;
-}
-
-/**
- * Tests whether a value is of a given type
- */
-function isType(type, value) {
-	switch(type) {
-		case 'Integer':
-			return isType('Number', value) && (isNaN(value) || !isFinite(value) || value % 1 === 0);
-		default:
-			return value instanceof window[type] ||
-				Object.prototype.toString.call(value) === '[object ' + type + ']';
-	}
 }
 
 })();
