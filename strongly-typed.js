@@ -86,7 +86,17 @@ else if ('__defineSetter__' in Object) {
 		o.__defineGetter__(property, etters.get);
 		
 		o.__defineSetter__(property, etters.set);
+	};
+}
+else {
+	if(window.console && console.warn) {
+		console.warn('Getters and Setters are not supported so StronglyTyped will fallback to regular properties');
 	}
+	
+	// Fallback to regular properties if getters/setters are not supported
+	var defineProperty = function(o, property, etters) {
+		o[property] = undefined;
+	};
 }
 
 var self = window.StronglyTyped = {
@@ -126,17 +136,6 @@ var self = window.StronglyTyped = {
 		o[name] = value;
 	}
 };
-
-// Fallback to regular properties if getters/setters are not supported
-if (typeof defineProperty === 'undefined') {
-	if(window.console && console.warn) {
-		console.warn('Getters and Setters are not supported so StronglyTyped will fallback to regular properties');
-	}
-	
-	self.property = function(type, o, property, value) {
-		o[property] = value;
-	}
-}
 
 // Shortcuts
 [
