@@ -61,17 +61,8 @@ var self = window.StronglyTyped = {
 		getProperties(o)[property] = value;
 		
 		Object.defineProperty(o, property, {
-			get: function() { 
-				return getProperties(o)[property];
-			},
-			set: function(value) { 
-				if(isType(type, value) || value === null || value === undefined) {
-					getProperties(o)[property] = value;
-				}
-				else {
-					throw TypeError(property + ' must be of type ' + type + '. ' + value + ' is not.');
-				}
-			}
+			get: getter.bind(o, property),
+			set: setter.bind(o, type, property)
 		});
 		
 		if(arguments.length > 3) {
@@ -81,13 +72,28 @@ var self = window.StronglyTyped = {
 };
 
 // Fallback to regular properties if Object.defineProperty is not supported
-if(!('defineProperty' in Object)) {
-	if(window.console && console.warn) {
-		console.warn('Object.defineProperty is not supported so StronglyTyped will fallback to regular properties');
+if (!('defineProperty' in Object)) {
+	if('__defineSetter__' in Object) {
+		// Opera supports those non-standard extensions,
+		// even though it doesn't support Object.defineProperty
+		self.property = function(type, o, property, value) {
+			o.__defineGetter__(property, getter.bind(o, property));
+			
+			o.__defineSetter__(property, setter.bind(o, type, property));
+			
+			if(arguments.length > 3) {
+				o[property] = value;
+			}
+		}
 	}
-	
-	self.property = function(type, o, property, value) {
-		o[property] = value;
+	else {
+		if(window.console && console.warn) {
+			console.warn('Object.defineProperty is not supported so StronglyTyped will fallback to regular properties');
+		}
+		
+		self.property = function(type, o, property, value) {
+			o[property] = value;
+		}
 	}
 }
 
@@ -109,13 +115,31 @@ if(!('defineProperty' in Object)) {
 /*************************
  * Private functions
  *************************/
+/**
+ * Generic getter
+ */
+function getter(property) { 
+	return getProperties(this)[property];
+}
+
+/**
+ * Generic setter
+ */
+function setter(type, property, value) { 
+	if (isType(type, value) || value === null || value === undefined) {
+		getProperties(this)[property] = value;
+	}
+	else {
+		throw TypeError(property + ' must be of type ' + type + '. ' + value + ' is not.');
+	}
+}
 
 /**
  * Finds the object and returns its strongly typed properties
  */
 function getProperties(o) {
 	for (var i=0, len=objects.length; i<len; i++) {
-		if(objects[i].object === o) {
+		if (objects[i].object === o) {
 			return objects[i].properties;
 		}
 	}
