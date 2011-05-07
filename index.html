@@ -14,6 +14,11 @@
 <script>
 	var o = {};
 	
+	console || (console = {});
+	['group', 'groupEnd', 'log'].forEach(function(method) {
+		console[method] || (console[method] = function(){});
+	});
+	
 	var tests = {
 		'Array': [[], [1, 2, 3], new Array(5), null, 'foo', 5],
 		'Boolean': [false, new Boolean(true), null, 'foo'],
@@ -25,7 +30,7 @@
 	}
 	
 	for(var type in tests) {
-		console.group && console.group(type);
+		console.group(type);
 		
 		var typeTests = tests[type],
 		    testProperty = 'test' + type;
@@ -44,8 +49,16 @@
 			}
 		});
 		
-		console.groupEnd && console.groupEnd();
+		console.groupEnd();
 	}
+	
+	console.group('const');
+	
+	StronglyTyped.const(o, 'testConst', Math.PI);
+	console.log('o.testConst is', o.testConst);
+	
+	console.log('Attempting: o.testConst = ', 5, '...');
+	console.log('o.testConst is', o.testConst);
 </script>
 
 </body>
