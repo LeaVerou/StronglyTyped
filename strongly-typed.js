@@ -60,14 +60,15 @@ var self = window.StronglyTyped = {
 	property: function(type, o, property, value) {
 		getProperties(o)[property] = value;
 		
-		Object.defineProperty(o, property, {
-			get: getter.bind(o, property),
-			set: setter.bind(o, type, property)
-		});
+		try {
+			Object.defineProperty(o, property, {
+				get: getter.bind(o, property),
+				set: setter.bind(o, type, property)
+			});
+		} 
+		catch(e) { /* IE8 and Saf4 */ }
 		
-		if(arguments.length > 3) {
-			o[property] = value;
-		}
+		o[property] = value;
 	}
 };
 
