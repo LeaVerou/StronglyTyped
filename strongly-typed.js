@@ -71,7 +71,7 @@ var self = window.StronglyTyped = {
 	/**
 	 * Constants that can't be changed
 	 */
-	const: function(o, name, value) {
+	constant: function(o, name, value) {
 		defineProperty(o, name, {
 			get: getter.bind(o, name),
 			set: function(value) {
