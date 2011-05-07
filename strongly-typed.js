@@ -68,10 +68,38 @@ var self = window.StronglyTyped = {
 		} 
 		catch(e) { 
 			// IE8 and Saf4
+<<<<<<< HEAD
 			// FIXME This fails silently atm. Should it log something in the console? 
 		}
 		
 		o[property] = value;
+=======
+			// ISSUE This fails silently atm. Should it log something in the console? 
+		}
+		
+		o[property] = value;
+	},
+	
+	/**
+	 * Constants that can't be changed
+	 */
+	const: function(o, name, value) {
+		defineProperty(o, name, {
+			get: getter.bind(o, name),
+			set: function(value) {
+				var currentValue = getProperties(this)[name];
+				
+				if (currentValue === undefined) {
+					getProperties(this)[name] = value;
+				}
+				else {
+					// ISSUE Should we throw an error?
+				}
+			}
+		});
+		
+		o[name] = value;
+>>>>>>> master
 	}
 };
 
