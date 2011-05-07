@@ -1,7 +1,7 @@
 /**
  * Library for strongly typed properties and global variables in JavaScript
  * @author Lea Verou
- * @version 1.0
+ * @version 1.1
  * MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
