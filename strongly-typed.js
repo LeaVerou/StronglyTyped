@@ -60,16 +60,10 @@ var self = window.StronglyTyped = {
 	property: function(type, o, property, value) {
 		getProperties(o)[property] = value;
 		
-		try {
-			defineProperty(o, property, {
-				get: getter.bind(o, property),
-				set: setter.bind(o, type, property)
-			});
-		} 
-		catch(e) { 
-			// IE8 and Saf4
-			// ISSUE This fails silently atm. Should it log something in the console? 
-		}
+		defineProperty(o, property, {
+			get: getter.bind(o, property),
+			set: setter.bind(o, type, property)
+		});
 		
 		o[property] = value;
 	},
@@ -96,9 +90,32 @@ var self = window.StronglyTyped = {
 	}
 };
 
+var supportsDefineProperty = 'defineProperty' in Object &&
+	(function(){
+		var testDOM = document.createElement('div'),
+		    testO = {};
+		
+		try {
+			Object.defineProperty(testDOM, 'test', {
+				get: function(){},
+				set:function(){}
+			});
+			
+			Object.defineProperty(testO, 'test', {
+				get: function(){},
+				set:function(){}
+			});
+		}
+		catch(e){
+			return false;
+		}
+		
+		return true;
+	})();
+
 // Smoothen out differences between Object.defineProperty
 // and __defineGetter__/__defineSetter__
-if ('defineProperty' in Object) {
+if (supportsDefineProperty) {
 	var defineProperty = Object.defineProperty;
 }
 else if ('__defineSetter__' in Object) {
