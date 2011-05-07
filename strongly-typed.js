@@ -61,40 +61,41 @@ var self = window.StronglyTyped = {
 		getProperties(o)[property] = value;
 		
 		try {
-			Object.defineProperty(o, property, {
+			defineProperty(o, property, {
 				get: getter.bind(o, property),
 				set: setter.bind(o, type, property)
 			});
 		} 
-		catch(e) { /* IE8 and Saf4 */ }
+		catch(e) { 
+			// IE8 and Saf4
+			// FIXME This fails silently atm. Should it log something in the console? 
+		}
 		
 		o[property] = value;
 	}
 };
 
-// Fallback to regular properties if Object.defineProperty is not supported
-if (!('defineProperty' in Object)) {
-	if('__defineSetter__' in Object) {
-		// Opera supports those non-standard extensions,
-		// even though it doesn't support Object.defineProperty
-		self.property = function(type, o, property, value) {
-			o.__defineGetter__(property, getter.bind(o, property));
-			
-			o.__defineSetter__(property, setter.bind(o, type, property));
-			
-			if(arguments.length > 3) {
-				o[property] = value;
-			}
-		}
-	}
-	else {
-		if(window.console && console.warn) {
-			console.warn('Object.defineProperty is not supported so StronglyTyped will fallback to regular properties');
-		}
+// Smoothen out differences between Object.defineProperty
+// and __defineGetter__/__defineSetter__
+if ('defineProperty' in Object) {
+	var defineProperty = Object.defineProperty;
+}
+else if ('__defineSetter__' in Object) {
+	var defineProperty = function(o, property, etters) {
+		o.__defineGetter__(property, etters.get);
 		
-		self.property = function(type, o, property, value) {
-			o[property] = value;
-		}
+		o.__defineSetter__(property, etters.set);
+	}
+}
+
+// Fallback to regular properties if getters/setters are not supported
+if (typeof defineProperty === 'undefined') {
+	if(window.console && console.warn) {
+		console.warn('Getters and Setters are not supported so StronglyTyped will fallback to regular properties');
+	}
+	
+	self.property = function(type, o, property, value) {
+		o[property] = value;
 	}
 }
 
@@ -112,10 +113,10 @@ if (!('defineProperty' in Object)) {
 	self[type.toLowerCase()] = self.property.bind(self, type);
 });
 
-
 /*************************
  * Private functions
  *************************/
+
 /**
  * Generic getter
  */
